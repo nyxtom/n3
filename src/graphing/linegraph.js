@@ -82,7 +82,7 @@ n3.graphing.__namespace = true;
                     yAxis.scale(y).ticks(4).tickSize(availableWidth).orient("right");
                     if (container.selectAll(".n3-y.n3-axis")[0].length == 0) {
                         container.append("g").attr("class", "n3-y n3-axis")
-                                          .attr("transform", "translate(-20,0)")
+                                          .attr("transform", "translate(-5,0)")
                                           .call(yAxis);
                     }
                     d3.transition(container.select(".n3-y.n3-axis")).call(yAxis);

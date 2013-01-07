@@ -63,6 +63,13 @@ svg .title {
   text-anchor: middle
 }
 
+.n3-x.n3-axis text {
+    text-anchor: middle;
+}
+.n3-y.n3-axis text {
+    text-anchor: end !important;
+}
+
 .n3-linegraph {
     transform:translate(0px,1px);
     -ms-transform:translate(0px,1px);
