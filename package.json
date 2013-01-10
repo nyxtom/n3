@@ -1,31 +1,35 @@
 {
-  "name": "n3",
-  "version": "0.1.1",
-  "description": "Reusable charts/visualizations built using d3",
-  "keywords": [
-    "charts", "visualization", "d3"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/nyxtom/n3.git"
-  },
-  "jam": {
-    "dependencies": {
-      "d3": "latest"
+    "name": "n3",
+    "version": "0.1.1",
+    "description": "Reusable charts/visualizations built using d3",
+    "keywords": [
+        "charts",
+        "visualization",
+        "d3"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/nyxtom/n3.git"
     },
-    "main": "n3.js",
-    "shim": {
-      "deps": ["d3"],
-      "exports": "n3"
+    "jam": {
+        "dependencies": {
+            "d3": "latest"
+        },
+        "main": "n3.js",
+        "shim": {
+            "deps": [
+                "d3"
+            ],
+            "exports": "n3"
+        },
+        "include": [
+            "n3.css"
+        ]
     },
-    "include": {
-      "n3.css"
-    }
-  },
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "http://www.opensource.org/licenses/mit-license.php",
-    }
-  ] 
+    "licenses": [
+        {
+            "type": "MIT",
+            "url": "http://www.opensource.org/licenses/mit-license.php"
+        }
+    ]
 }
