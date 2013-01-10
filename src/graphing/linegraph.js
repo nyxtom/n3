@@ -26,6 +26,7 @@ n3.graphing.__namespace = true;
         var yScale = d3.scale.linear();
         var xDomain = null;
         var yDomain = null;
+        var transitionDuration = 200;
         
         var color = function () {
             var colors = d3.scale.category20c().range();
@@ -46,16 +47,20 @@ n3.graphing.__namespace = true;
                 chart.container = container;
 
                 // Initialize scales
-                if (!xDomain) {
-                    xDomain = [d3.min(data, function (d) { return d3.min(d.values, function (dv) { return dv.x; }); }), 
-                               d3.max(data, function (d) { return d3.max(d.values, function (dv) { return dv.x; }); })];
-                }
-                if (!yDomain) {
-                    yDomain = [0,d3.max(data, function (d) { return d3.max(d.values, function (dv) { return dv.y; }); })];
-                    yDomain[1] = yDomain[1] * 1.25;
-                }
-                x = xScale.range([0, availableWidth]).domain(xDomain);
-                y = yScale.range([availableHeight, 0]).domain(yDomain);
+                var xd = [];
+                var yd = [];
+                xd = [d3.min(data, function (d) { return d3.min(d.values, function (dv) { return dv.x; }); }), 
+                      d3.max(data, function (d) { return d3.max(d.values, function (dv) { return dv.x; }); })];
+                yd = [0,d3.max(data, function (d) { return d3.max(d.values, function (dv) { return dv.y; }); })];
+                yd[1] = yd[1] * 1.25;
+
+                if (xDomain)
+                    xd = xDomain;
+                if (yDomain)
+                    yd = yDomain;
+
+                x = xScale.range([0, availableWidth]).domain(xd);
+                y = yScale.range([availableHeight, 0]).domain(yd);
 
                 // Add the optional background
                 if (background) {
@@ -136,13 +141,13 @@ n3.graphing.__namespace = true;
                                              return line(d.values);
                                          });
 
-                g.select(".n3-area").attr("d", function (d, i) { 
+                g.select(".n3-area").transition().duration(transitionDuration).attr("d", function (d, i) { 
                                      var area = d3.svg.area().x(function (d) { return x(d.x); })
                                                       .y0(availableHeight)
                                                       .y1(function (d) { return y(d.y); });
                                      return area(d.values);
                                  });
-                g.select(".n3-stroke").attr("d", function (d, i) {
+                g.select(".n3-stroke").transition().duration(transitionDuration).attr("d", function (d, i) {
                                         var line = d3.svg.line().x(function (d) { return x(d.x); })
                                                                 .y(function (d) { return y(d.y); });
                                         return line(d.values);
@@ -210,6 +215,12 @@ n3.graphing.__namespace = true;
         chart.yDomain = function (_) {
             if (!arguments.length) return yDomain;
             yDomain = _;
+            return chart;
+        };
+
+        chart.transitionDuration = function (_) {
+            if (!arguments.length) return transitionDuration;
+            transitionDuration = _;
             return chart;
         };
 
