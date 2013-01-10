@@ -28,6 +28,7 @@ n3.graphing.__namespace = true;
         var yDomain = null;
         var transitionDuration = 200;
         var transitionZero = false;
+        var pointRadius = 5;
         
         var color = function () {
             var colors = d3.scale.category20c().range();
@@ -85,7 +86,7 @@ n3.graphing.__namespace = true;
                     d3.transition(container.select(".n3-x.n3-axis")).call(xAxis);
                 }
                 if (!hideYAxis) {
-                    yAxis.scale(y).ticks(4).tickSize(availableWidth).orient("right");
+                    yAxis.scale(y).ticks(ticks).tickSize(availableWidth).orient("right");
                     if (container.selectAll(".n3-y.n3-axis")[0].length == 0) {
                         container.append("g").attr("class", "n3-y n3-axis")
                                           .attr("transform", "translate(-5,0)")
@@ -149,9 +150,9 @@ n3.graphing.__namespace = true;
                                           .y0(availableHeight)
                                           .y1(availableHeight);
                          return area(d.values);
-                    });
+                    }).transition().duration(transitionDuration);
 
-                areaSelection.transition().duration(transitionDuration).attr("d", function (d, i) { 
+                areaSelection.attr("d", function (d, i) { 
                                      var area = d3.svg.area().x(function (d) { return x(d.x); })
                                                       .y0(availableHeight)
                                                       .y1(function (d) { return y(d.y); });
@@ -164,13 +165,70 @@ n3.graphing.__namespace = true;
                         var line = d3.svg.line().x(function (d) { return x(d.x); })
                                                 .y(availableHeight);
                         return line(d.values);
-                    });
+                    }).transition().duration(transitionDuration);
 
-                strokeSelection.transition().duration(transitionDuration).attr("d", function (d, i) {
+                strokeSelection.attr("d", function (d, i) {
                                         var line = d3.svg.line().x(function (d) { return x(d.x); })
                                                                 .y(function (d) { return y(d.y); });
                                         return line(d.values);
                                     });
+
+                // add the cursor
+                gEnter.append("line").attr("class", "n3-cursor")
+                                 .attr("x1", 0)
+                                 .attr("x2", 0)
+                                 .attr("y1", 0)
+                                 .attr("y2", availableHeight);
+
+                // add group for all points
+                var pointsEnter = gEnter.append("g").attr("class", "n3-points");
+
+                container.on('mousemove', function () {
+                    var dataX = x.invert(d3.mouse(this)[0]);
+                    var selections = [];
+                    data.forEach(function (d, i) {
+                        var bisector = d3.bisector(function (da) { return da.x }).right;
+                        var rightIndex = bisector(d.values, dataX);
+                        var leftVal = d.values[rightIndex - 1], rightVal = d.values[rightIndex];
+
+                        if (rightVal && Math.abs(leftVal.x - dataX) > Math.abs(rightVal.x - dataX)) {
+                            selections.push(rightVal);
+                        }
+                        else {
+                            selections.push(leftVal);
+                        }
+
+                    });
+
+                    // update the cursor
+                    g.select(".n3-cursor")
+                            .attr("x1", x(dataX))
+                            .attr("x2", x(dataX))
+                            .attr("y1", 0)
+                            .attr("y2", availableHeight)
+                            .attr("stroke", function (d, i) { return d.color || color(d, i) });
+
+                    // append points for each of the lines
+                    pointsEnter.each(function (d,i) {
+                        var points = d3.select(this).selectAll(".n3-point").data(selections);
+                        points.enter().append("circle").attr("class", "n3-point")
+                                                        .attr("cx", function (da, i) { return x(da.x); })
+                                                        .attr("cy", function (da, i) { return y(da.y); })
+                                                        .attr("r", pointRadius)
+                                                        .attr("fill", d.color || color(d, i))
+                                                        .attr("stroke", d.color || color(d, i))
+                                                        .on('mouseover', function () {
+                                                            d3.select(this).transition().attr("r", pointRadius * 1.25);
+                                                        })
+                                                        .on('mouseout', function () {
+                                                            d3.select(this).transition().attr("r", pointRadius);
+                                                        });
+                        points.attr("cx", function (da, i) { return x(da.x); })
+                              .attr("cy", function (da, i) { return y(da.y); });
+                        points.exit().remove();
+                    });
+                });
+
             });
         };
 
@@ -246,6 +304,12 @@ n3.graphing.__namespace = true;
         chart.transitionZero = function (_) {
             if (!arguments.length) return transitionZero;
             transitionZero = _;
+            return chart;
+        };
+
+        chart.pointRadius = function (_) {
+            if (!arguments.length) return pointRadius;
+            pointRadius = _;
             return chart;
         };
 

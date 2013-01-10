@@ -20,7 +20,7 @@ svg .title {
  font: bold 14px Arial;
 }
 
-.n3 .n3-background {
+.n3-background {
   fill-opacity: 1;
 }
 
@@ -42,7 +42,6 @@ svg .title {
 .n3-axis line {
   fill: none;
   stroke: #313131;
-  stroke-opacity: .75;
   shape-rendering: crispEdges;
 }
 .n3-axis line.minor {
@@ -63,6 +62,58 @@ svg .title {
   text-anchor: middle
 }
 
+.n3-stroke {
+    stroke-width: 1.5px;
+}
+
+.n3-axis text, .n3-points {
+    opacity: 0;
+    -webkit-transition: opacity .1s ease-in-out;
+    -moz-transition: opacity .1s ease-in-out;
+    -o-transition: opacity .1s ease-in-out;
+    transition: opacity .1s ease-in-out;
+}
+.n3-cursor {
+    opacity: 0;
+    -webkit-transition: opacity .2s ease-in-out;
+    -moz-transition: opacity .2s ease-in-out;
+    -o-transition: opacity .2s ease-in-out;
+    transition: opacity .2s ease-in-out;
+}
+.graph .n3-y.n3-axis line {
+    opacity: 0.2;
+    -webkit-transition: opacity .2s ease-in-out;
+    -moz-transition: opacity .2s ease-in-out;
+    -o-transition: opacity .2s ease-in-out;
+    transition: opacity .2s ease-in-out;
+}
+.graph:hover .n3-y.n3-axis line {
+    opacity: 0.7;
+}
+.graph:hover .n3-axis text {
+    opacity: 1;
+}
+.graph:hover .n3-points, .graph:hover .n3-cursor {
+    opacity: 1;
+}
+.graph:hover {
+    cursor: text;
+}
+.graph:hover .n3-points .n3-point {
+    opacity: 0.5;
+    stroke-width: 2px;
+    -webkit-transition: all .1s ease-in-out;
+    -moz-transition: all .1s ease-in-out;
+    -o-transition: all .1s ease-in-out;
+    transition: all .1s ease-in-out;
+}
+.graph:hover .n3-points .n3-point:hover {
+    opacity: 1;
+    fill: #fff;
+    stroke: #fff;
+    stroke-opacity: 0.5;
+    stroke-width: 8px;
+}
 .n3-x.n3-axis text {
     text-anchor: middle;
 }
