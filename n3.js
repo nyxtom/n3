@@ -157,6 +157,7 @@ n3.graphing.__namespace = true;
         var xDomain = null;
         var yDomain = null;
         var transitionDuration = 200;
+        var transitionZero = false;
         
         var color = function () {
             var colors = d3.scale.category20c().range();
@@ -271,13 +272,31 @@ n3.graphing.__namespace = true;
                                              return line(d.values);
                                          });
 
-                g.select(".n3-area").transition().duration(transitionDuration).attr("d", function (d, i) { 
+                var areaSelection = g.select(".n3-area");
+                if (transitionZero)
+                    areaSelection = areaSelection.transition().duration(transitionDuration).attr("d", function (d, i) {
+                         var area = d3.svg.area().x(function (d) { return x(d.x); })
+                                          .y0(availableHeight)
+                                          .y1(availableHeight);
+                         return area(d.values);
+                    });
+
+                areaSelection.transition().duration(transitionDuration).attr("d", function (d, i) { 
                                      var area = d3.svg.area().x(function (d) { return x(d.x); })
                                                       .y0(availableHeight)
                                                       .y1(function (d) { return y(d.y); });
                                      return area(d.values);
                                  });
-                g.select(".n3-stroke").transition().duration(transitionDuration).attr("d", function (d, i) {
+
+                var strokeSelection = g.select(".n3-stroke");
+                if (transitionZero)
+                    strokeSelection = strokeSelection.transition().duration(transitionDuration).attr("d", function (d, i) {
+                        var line = d3.svg.line().x(function (d) { return x(d.x); })
+                                                .y(availableHeight);
+                        return line(d.values);
+                    });
+
+                strokeSelection.transition().duration(transitionDuration).attr("d", function (d, i) {
                                         var line = d3.svg.line().x(function (d) { return x(d.x); })
                                                                 .y(function (d) { return y(d.y); });
                                         return line(d.values);
@@ -351,6 +370,12 @@ n3.graphing.__namespace = true;
         chart.transitionDuration = function (_) {
             if (!arguments.length) return transitionDuration;
             transitionDuration = _;
+            return chart;
+        };
+
+        chart.transitionZero = function (_) {
+            if (!arguments.length) return transitionZero;
+            transitionZero = _;
             return chart;
         };
 
