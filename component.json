@@ -1,0 +1,8 @@
+{
+  "name":"n3",
+  "version":"0.1.1",
+  "main":["n3.css","n3.js"],
+  "dependencies": {
+    "d3": "latest"
+  }
+}
