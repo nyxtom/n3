@@ -5,7 +5,7 @@ n3.js is built on top of d3.js for creating super simple reusable
 visualizations using the [reusable charts](http://bost.ocks.org/mike/chart/) concept. Inspired by
 [nvd3](http://nvd3.org/) for workflow in adding graphs and re-rendering graphs.
 
-![](http://i.imgur.com/3xEzA.png)
+![](http://i.imgur.com/NaVIO.png)
 
 ### Creating graphs
 --------------------
@@ -17,7 +17,7 @@ First in order to use `n3.js` you will need to include the following:
 <script type="text/javascript" src="/javascripts/n3.min.js" />
 ```
 
-### n3.addGraph(callback):
+### n3.graphing.linegraph
 To add a new chart use the `addGraph` function:
 
 ```
@@ -34,6 +34,24 @@ n3.addGraph(function () {
     return chart;
 });
 ```
+
+There are many options that you can provide (and chain) when modifying a linegraph:
+* ```chart.pointRadius(5)```: gets or sets the radius of the circle on tooltips
+* ```chart.transitionZero(true)```: when data is updated, this will transition lines to zero before displaying new data
+* ```chart.transitionDuration(250)```: if transitionZero is enabled, this is the duration between transitions.
+* ```chart.yDomain([min of data,max of data])```: default will use the min/max bounds, this provides specific bounds
+* ```chart.xDomain([min of data,max of data])```: similar to `yDomain` except on the x-axis
+* ```chart.yScale(d3.scale.linear())```: scale of the y domain values (default linear)
+* ```chart.xScale(d3.scale.linear())```: scale of the x domain values (default linear)
+* ```chart.background('#313131')```: sets the background to the chart
+* ```chart.margin({top:0,right:0,bottom:0,left:0})```: sets the margins of the chart
+* ```chart.width()```: gets or sets the width of the chart
+* ```chart.height()```: gets or sets the height of the chart
+* ```chart.hideXAxis()```: gets or sets whether to show the x axis
+* ```chart.hideYAxis()```: gets or sets whether to show the y axis
+
+Since the code is pretty much all there, if you find anything that needs to be customized, feel free to submit an issue, 
+extend or create a new chart based on the one above.
 
 ### n3.windowResize
 This will automatically call the `n3.dispatch.updateGraphs` function which is currently being 
