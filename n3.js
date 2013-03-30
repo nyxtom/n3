@@ -159,6 +159,7 @@ n3.graphing.__namespace = true;
         var transitionDuration = 200;
         var transitionZero = false;
         var pointRadius = 5;
+        var hideCursor = false;
         
         var color = function () {
             var colors = d3.scale.category20c().range();
@@ -304,15 +305,30 @@ n3.graphing.__namespace = true;
                                     });
 
                 // add the cursor
-                gEnter.append("line").attr("class", "n3-cursor")
-                                 .attr("x1", 0)
-                                 .attr("x2", 0)
-                                 .attr("y1", 0)
-                                 .attr("y2", availableHeight);
+                if (!hideCursor) {
+                    gEnter.append("line").attr("class", "n3-cursor")
+                                     .attr("x1", 0)
+                                     .attr("x2", 0)
+                                     .attr("y1", 0)
+                                     .attr("y2", availableHeight);
+                }
 
                 // add group for all points
                 var pointsEnter = gEnter.append("g").attr("class", "n3-points");
 
+                // handle with the mouse clicks down on the container
+                container.on('mousedown', function () {
+                    if (!hideCursor) {
+                        console.log(container);
+                    }
+                });
+                container.on('mouseup', function () {
+                    if (!hideCursor) {
+                        console.log(container);
+                    }
+                });
+
+                // handle when the mouse moves over the container
                 container.on('mousemove', function () {
                     var dataX = x.invert(d3.mouse(this)[0]);
                     var selections = [];
@@ -331,12 +347,14 @@ n3.graphing.__namespace = true;
                     });
 
                     // update the cursor
-                    g.select(".n3-cursor")
-                            .attr("x1", x(dataX))
-                            .attr("x2", x(dataX))
-                            .attr("y1", 0)
-                            .attr("y2", availableHeight)
-                            .attr("stroke", function (d, i) { return d.color || color(d, i) });
+                    if (!hideCursor) {
+                        g.select(".n3-cursor")
+                                .attr("x1", x(dataX))
+                                .attr("x2", x(dataX))
+                                .attr("y1", 0)
+                                .attr("y2", availableHeight)
+                                .attr("stroke", function (d, i) { return d.color || color(d, i) });
+                    }
 
                     // append points for each of the lines
                     pointsEnter.each(function (d,i) {
@@ -358,7 +376,6 @@ n3.graphing.__namespace = true;
                         points.exit().remove();
                     });
                 });
-
             });
         };
 
@@ -440,6 +457,12 @@ n3.graphing.__namespace = true;
         chart.pointRadius = function (_) {
             if (!arguments.length) return pointRadius;
             pointRadius = _;
+            return chart;
+        };
+
+        chart.hideCursor = function (_) {
+            if (!arguments.length) return hideCursor;
+            hideCursor = _;
             return chart;
         };
 
